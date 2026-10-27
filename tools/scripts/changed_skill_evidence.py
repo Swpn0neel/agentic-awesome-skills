@@ -27,6 +27,7 @@ from git_change_records import (
     resolve_commit,
 )
 from security_scanner import scan_skill_file
+import reviewed_source_exceptions
 
 
 SCHEMA_VERSION = 1
@@ -467,6 +468,7 @@ def build_report(
     policy_oid, provenance_exceptions = load_provenance_exceptions(
         root, policy_ref or base_ref
     )
+    reviewed_sources = reviewed_source_exceptions.load(root, policy_oid)
     old_roots = canonical_skill_roots(root, base_oid)
     new_roots = canonical_skill_roots(root, head_oid)
     readme_bytes = read_path(root, head_oid, "README.md") or b""
@@ -541,6 +543,11 @@ def build_report(
                 readme_credits,
                 provenance_exceptions,
             )
+            provenance_blockers, source_exceptions = reviewed_source_exceptions.apply(
+                root, head_oid, effective_id, change_type, comparison_before, after,
+                provenance_blockers, reviewed_sources, readme_bytes.decode("utf-8", "replace"),
+            )
+            applied_exceptions.extend(source_exceptions)
             reasons.extend(provenance_blockers)
             reasons = sorted(set(reasons))
             all_reasons.extend(reasons)
@@ -560,6 +567,18 @@ def build_report(
                 }
             )
 
+    # Account only for top-level aliases removed together with their canonical
+    # target. Other orphan content remains uncovered and the merge gate rejects it.
+    deleted_ids = {item["old_skill_id"] for item in changes if item["change_type"] == "deleted"}
+    deleted_aliases = []
+    for record in records:
+        if (record.status != "D" or record.old_mode != "120000"
+                or not re.fullmatch(r"skills/[a-z0-9-]+", record.old_path or "")):
+            continue
+        target = read_blob(root, record.old_oid).decode("ascii", "replace")
+        if re.fullmatch(r"[a-z0-9-]+", target) and target in deleted_ids:
+            deleted_aliases.append({"target_skill_id": target, "record": record.to_dict()})
+
     changes.sort(key=lambda item: (str(item["new_skill_id"] or item["old_skill_id"]), item["change_type"]))
     reasons = sorted(set(all_reasons))
     return {
@@ -570,6 +589,7 @@ def build_report(
         "head_oid": head_oid,
         "policy_oid": policy_oid,
         "changes": changes,
+        "deleted_aliases": deleted_aliases,
         "blocking": bool(reasons),
         "reasons": reasons,
         "provenance_exceptions_applied": sorted(set(all_applied_exceptions)),

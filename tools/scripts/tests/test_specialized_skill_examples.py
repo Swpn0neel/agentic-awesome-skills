@@ -8,16 +8,18 @@ import sqlite3
 import unittest
 from pathlib import Path
 
+from fixtures.reviewed_examples import reviewed_source
+
 ROOT = Path(__file__).resolve().parents[3]
 
 
 def example_definitions():
-    text = (ROOT / 'skills/embedding-strategies/SKILL.md').read_text()
+    text = reviewed_source('skills/embedding-strategies/SKILL.md')
     selected = []
     for block in re.findall(r'```python\n(.*?)```', text, re.S):
         tree = ast.parse(block)
         selected.extend(node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.ClassDef))
-                        and node.name in {'chunk_by_tokens', 'recursive_character_splitter', 'LocalEmbedder'})
+                        and node.name in {'chunk_by_tokens', 'recursive_character_splitter', 'LocalEmbedder', 'DomainEmbeddingPipeline'})
     class Model:
         def __init__(self, *args, **kwargs):
             self.texts = None
@@ -27,7 +29,7 @@ def example_definitions():
     class Numpy:
         ndarray = list
     from typing import List
-    namespace = {'List': List, 'np': Numpy, 'SentenceTransformer': Model}
+    namespace = {'List': List, 'np': Numpy, 'SentenceTransformer': Model, 're': re}
     exec(compile(ast.Module(body=selected, type_ignores=[]), '<reviewed-pure-examples>', 'exec'), namespace)
     return namespace
 
@@ -62,6 +64,20 @@ class Examples(unittest.TestCase):
         self.assertEqual(embedder.embed_query('question'), 'query: question')
         self.assertEqual(embedder.embed_documents(['document']), ['document'])
 
+    def test_domain_pipeline_preserves_code_and_currency_and_returns_records(self):
+        namespace = example_definitions()
+        # Offline adapters isolate transformation from tokenizer/model/provider services.
+        namespace['chunk_by_tokens'] = lambda text, size, overlap: [text]
+        namespace['get_embeddings'] = lambda chunks, model: [[len(c)] for c in chunks]
+        pipeline = namespace['DomainEmbeddingPipeline']()
+        text = 'cost = $42; call(x) -> y / 2'
+        records = pipeline.process_documents([{'id': 'fixture', 'content': text}])
+        self.assertIsInstance(records, list)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]['text'], text)
+        self.assertEqual(records[0]['embedding'], [len(text)])
+        self.assertEqual(records[0]['id'], 'fixture_chunk_0')
+
     def test_kpi_queries_keep_cohort_denominator_and_spend_grain(self):
         db = sqlite3.connect(':memory:')
         self.addCleanup(db.close)
@@ -82,7 +98,7 @@ class Examples(unittest.TestCase):
         self.assertEqual(db.execute(queries['growth']).fetchall(), [(0,0.0,None),(1,100.0,None),(2,150.0,50.0)])
 
     def test_llm_agreement_ranges_and_zero_baseline_regression(self):
-        source = (ROOT / 'skills/llm-evaluation/SKILL.md').read_text()
+        source = reviewed_source('skills/llm-evaluation/SKILL.md')
         definitions = []
         for block in re.findall(r'```python\n(.*?)```', source, re.S):
             definitions.extend(node for node in ast.parse(block).body
@@ -113,7 +129,7 @@ class Examples(unittest.TestCase):
                 self.assertEqual(list(Path(directory).iterdir()), [])
 
     def test_azure_hook_requires_all_resource_inputs_before_role_mutation(self):
-        source = (ROOT / 'skills/azd-deployment/SKILL.md').read_text()
+        source = reviewed_source('skills/azd-deployment/SKILL.md')
         section = source.split('### Post-Provision RBAC Assignment', 1)[1].split('## Common Commands', 1)[0]
         import yaml
         hook = yaml.safe_load(re.search(r'```yaml\n(.*?)```', section, re.S).group(1))['hooks']['postprovision']['run']

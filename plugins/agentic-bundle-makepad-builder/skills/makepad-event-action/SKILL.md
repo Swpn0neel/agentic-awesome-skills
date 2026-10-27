@@ -12,7 +12,7 @@ description: 'CRITICAL: Use for Makepad event and action handling. Triggers on:
 metadata:
   aas-risk: safe
   aas-source: community
-  aas-date-added: '2026-09-04'
+  aas-date-added: '2026-03-06'
 ---
 
 ## Supporting material availability
@@ -53,8 +53,8 @@ Refer to the local files for detailed documentation:
 
 1. Read the relevant reference file(s) listed above
 2. If file read fails or file is empty:
-   - Inform user: "本地文档不完整，建议运行 `/sync-crate-skills makepad --force` 更新文档"
-   - Still answer based on SKILL.md patterns + built-in knowledge
+   - Report the missing reference and the resulting coverage limit; do not recommend an unavailable slash command or claim the missing procedure was followed
+   - Use independent inline patterns only after checking their compatibility with the project's pinned crate; identify unverified APIs
 3. If reference file exists, incorporate its content into the answer
 
 ## Event Enum (Key Variants)

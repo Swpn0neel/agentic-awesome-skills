@@ -180,7 +180,7 @@ assert.throws(
 );
 const events = [];
 const deps = {
-  load: (_, __, n) => ({ number: n, headRefOid: sha }),
+  load: (_, __, n) => ({ number: n, state:"OPEN", headRefOid: sha }),
   approve: (_, __, pr, options) => {
     events.push(pr.number);
     assert.equal(options.evaluatorOid, oid);
@@ -197,17 +197,14 @@ const prepared = prepareBatch(
 assert.deepEqual(events, [1, 2]);
 assert.ok(prepared.every((pr) => !pr.merged));
 assert.equal(parseArgs(["--prepare-only"]).prepareOnly, true);
-assert.throws(
-  () =>
-    prepareBatch(
-      "/tmp",
-      "owner/repo",
-      [3],
-      {},
-      { ...deps, load: () => ({ mergeable: "CONFLICTING" }) },
-    ),
-  /conflicts/,
+const conflicts = prepareBatch(
+  "/tmp", "owner/repo", [3, 4], { evaluatorOid: oid },
+  { ...deps, load: (_, __, n) => n === 3 ? { state:"OPEN", mergeable: "CONFLICTING" } : { number: n, state:"OPEN", headRefOid: sha } },
 );
+assert.equal(conflicts[0].status, "blocked");
+assert.match(conflicts[0].reason, /conflicts/);
+assert.equal(conflicts[1].prepared, true);
+
 const lease = {
   id: 1,
   environment: "aas-maintainer-batch",

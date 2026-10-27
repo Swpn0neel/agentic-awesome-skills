@@ -7,6 +7,205 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [20.0.0] - 2026-10-24 - "The Full-Catalog Review"
+
+> Our most significant catalog quality milestone yet: **2,750 skill entrypoints**, a completed individual-review inventory, and corrections across more than **2,000 skill bundles**. AAS 20 brings the entire catalog onto a documented review baseline.
+
+### A complete review baseline
+
+- Completed the catalog-wide individual review campaign: **2,368 root-bundle dispositions**, comprising **2,042 corrected**, **322 retained**, and **4 removed** bundles, alongside **284 preserved earlier review records**. The combined inventory covers all **2,652** root bundles present during integration; after the four removals, **2,648** remain, containing **2,750** top-level and nested `SKILL.md` entrypoints.
+- Reviewed skill instructions and bundled resources for correctness, safety, provenance, permissions, declared risk, examples and limitations. Corrected the problems identified in those reviews, including unsafe command guidance, credential handling, unbounded network/file operations, self-authorizing agent instructions, misleading technical examples and unsupported claims.
+- Published per-batch findings and before/after file hashes in `docs/maintainers/`. Previously reviewed bundles keep their earlier records; review coverage does not imply that every external service, paid workflow, GPU job or native client was exercised. Removed unread files and binary-inspection limits remain explicitly recorded.
+
+### New skills since 19.15.0
+
+- **product-design-harness** — review product decisions through user, evidence and business perspectives, with bounded handoffs and the two original UX3 diagrams restored.
+- **a4a** and **cooper-email** — guidance for encrypted agent messaging and agent email inboxes, with explicit credential, data-sharing and action boundaries.
+- **faber-language** — write and check Faber programs.
+- **shopify-firebase-app** — build Shopify applications using Firebase.
+- **doomsday-escrow** — inspect Proof-of-Escrow bounty submissions and verification evidence.
+- **datawebot** — work with ecommerce product data.
+- **Four FootVal skills** — follow matches and tables, scout and rank players, inspect statistics and transfer news, and value and compare players. Provider data and valuations retain their stated limits.
+
+### Security and reliability
+
+- Patched the dependency versions behind the **23 recorded Dependabot alerts**, including `body-parser`, `fast-uri`, `undici` and `ip-address`, across canonical projects and the affected existing plugin lockfile replicas. The full audit also identified and corrected affected Zod dependencies. The seven canonical npm projects passed audits including development dependencies at remediation time; dashboard dismissal is separate from those source fixes.
+- Preserved the catalog review's HTTPS, temporary-file, secret-handling and explicit authorization boundaries in the latest **Datacircle** pricing-definition update.
+- Strengthened protected review evidence, exact-head validation and release-cycle completion checks so publication consumes the reviewed source batch and an immutable tested distribution.
+
+### Upgrade notes
+
+- Removed **xlsx-official**, **pdf-official**, **docx-official** and **pptx-official** after restrictive-license review. Their old `docx` and `pptx` alias links were also removed. Update stacks that reference these IDs; use an appropriately licensed retained alternative after reviewing it for the task.
+- Reinstall or update to **20.0.0** to receive the reviewed catalog and refreshed plugin distributions. Existing pinned installs keep their previous version until updated. Independently pinned catalog revisions retain their runtime compatibility requirements.
+
+### Thanks
+
+Thanks to the contributors and upstream authors behind the catalog, including **@waynehamadi**, **@cis2042**, **@doomsday-network**, and the authors of the new messaging, email, language, Shopify/Firebase, ecommerce and FootVal skills. Original provenance and license notices remain with each retained bundle.
+
+## [19.15.0] - 2026-10-22 - "Reviewed Community Skills And Reliable Fork Evidence"
+
+> Adds **6** catalog skills, ships **2,743 skills**, and removes the false SkillSpector timeout on legitimate fork pull requests.
+
+### Added
+
+- **us-watchlist-alerts** - keep a local US stock and ETF watchlist, evaluate price and market alerts, and write morning or after-close briefs from public quotes. Installation and optional delivery integrations require consent; credentials stay in environment variables; the skill never places, modifies or cancels trades and does not present output as financial advice.
+- **animated-github-profile** - build theme-aware animated GitHub profile READMEs with SVG, CSS and SMIL, including example automation pinned to immutable action commits.
+- **launch-check** - run a passive pre-launch audit of a public URL for exposed secrets, open database rules, security headers, phone layout, search readiness and speed. Live reads are bounded and destructive or write-capable steps are excluded.
+- **second-deposit-igaming** - analyze local casino CRM exports for why first-time depositors skip a second deposit, producing local aggregates and CRM lists while keeping player rows out of chat. Laws must be rechecked, responsible-gaming filters remain mandatory and schedule creation requires explicit consent.
+- **usage-engineer** - compact agent logs, detect stale project maps and audit local Codex and OpenCode usage with no network calls. Maintainer repairs remove shell invocation, make health checks argv-based and return an explicit unavailable status for omitted upstream tests.
+- **watch-igaming** - pair video speech and scene frames by timecode to produce reviews, QA tables, UX audits or meeting notes. Downloads and processing remain local, dependency installation requires consent and findings without timecodes are rejected.
+
+### Changed
+
+- **mmx-cli** - prefer MiniMax M3.1 Flash for new text workloads after the upstream documentation changed the recommended default.
+- **datacircle** - use a bounded temporary download, reject insecure redirects and oversized responses, describe the expanded cached API sheets, and treat the downloaded pricing dataset as untrusted data rather than instructions.
+
+### Fixed
+
+- **Fork PR SkillSpector evidence** - bind the exact-head `pr-evidence` result to its Actions job, trusted CI workflow run and current pull request instead of relying on GitHub's sometimes-empty `check_run.pull_requests` association. Wrong SHAs, branches, source or base repositories, workflow paths and events now fail closed.
+- **Shared shortlist and collection skill IDs** - accept the canonical catalog contract for dotted and 200-character IDs while rejecting 201 characters and keeping collection record IDs on their stricter format.
+- **Catalog app dependency audit** - update the affected Vitest dependency chain so the web application audit reports no vulnerabilities.
+
+### Merge batch
+
+Eleven source changes were reviewed for this release. The five fork bundles with executable or support files were consolidated into one owner-authored protected PR, then merged after complete-tree review and deterministic checks. The workflow/evidence repair, shared-ID fix, Datacircle refresh, `us-watchlist-alerts` and `animated-github-profile` also merged through `merge:batch`.
+
+### Review scope
+
+Changed skill trees were reviewed at their exact submitted content heads or their reproducible owner-authored consolidation. Deterministic validation, reference checks, documentation security, strict scanning and changed-skill evidence passed. The SkillSpector workflow was exercised against a real exact-head run with positive provenance and negative SHA and fork cases. The executable bundle dry runs covered launch checks, local GEO and polish audits, synthetic second-deposit analysis and usage local audit/map behavior. The broader catalog audit remains unfinished.
+
+### Thanks
+
+Thanks to **@eli-alvarado** for `us-watchlist-alerts`, **@jhuang-tt** for the catalog-ID repair and fork-evidence diagnosis, **@waynehamadi** for the Datacircle update, **@noamshorts22-prog** for `usage-engineer`, **@Ces107** for `launch-check`, **@igamingsychov** for the two igaming skills and **@shivamnamdev** for `animated-github-profile`, and to the upstream authors whose licensed material is included.
+
+## [19.13.0] - 2026-10-21 - "Thirteen Reviewed Skills And Security Hardening"
+
+> Adds **13** catalog skills and ships **2,737 skills**. All nine PRs in the maintenance batch were repaired, reviewed and merged.
+
+### Added
+
+- **neverapply** — find jobs, tailor resumes and prepare applications through the hosted NeverApply MCP service, with user approval before applying.
+- **agy-powerline** — configure Antigravity CLI's statusline for quotas, model, context and Git information, using a reviewed runtime.
+- **calibrate-first** — establish a dataset's detection floor and pre-register trading-signal tests; insufficient evidence stays undecidable.
+- **lanshu-create-ai-presenter-video** — plan presenter-led explainer videos with an immutable upstream source reference and explicit provider, upload and spending consent. The catalog bundles the guide and license, not an executable runtime.
+- **apify-youtube-transcript-scraper** — retrieve captions, timestamped quotations, SRT/VTT and translated transcripts from YouTube videos, channels and playlists through Apify, with private exports and bounded paid runs.
+- **party-planning** — estimate food and drink purchases, choose games and draft hosting timelines from disclosed HostPartyPlay heuristics, with allergy, age and privacy limits.
+- **pixeltable** — build multimodal applications, embedding search and computed-column pipelines with Pixeltable, reviewing application code before schema commands import it.
+- **Six official Beatra pointers** — `ai-audiobook-narration`, `ai-image-realism`, `ai-storyboard-generator`, `wechat-cover-maker`, `zhongcao-cover-maker` and `zhongcao-note-copywriter`. Each names immutable upstream content and requires complete source review plus consent for credentials, uploads and paid work.
+
+### Changed
+
+- **goal-instruction-writer** — refresh goal contracts, drift controls and examples to the author's 0.2.5 guidance.
+- **datacircle** — refresh the published plan-pricing dataset workflow and its usage guidance.
+- **apify-tiktok-scraper** — require explicit approval of recurring frequency, duration, budget and delivery destination before creating scheduled tracking.
+- Restore **216 skill introduction dates** from their actual first-addition history; a previous bulk edit had overwritten them with one date.
+
+### Security and reliability
+
+- Resolve the supplied **93-row security report** against current canonical sources: 91 rows corrected, one already corrected and one referencing a retired path. Duplicate mirror findings share their canonical fix; the per-row evidence is recorded in `docs/maintainers/security-findings-19.13.0.json`.
+- Keep contributor Markdown inert in repository tests: reviewed executable fixtures are maintained separately and document examples are compared as data.
+- Harden local preview, citation, session and state paths against symlinks and traversal; protect Electron driver state with private ownership/permissions, including Windows ACL checks, and atomic writes.
+- Bound template, color and archive parsing; redact sensitive fact-check and PII output; escape terminal controls and neutralize spreadsheet formulas. Tighten credential handling, recurring-work consent, remote-code guidance and external installer prerequisites throughout the affected skills.
+- Patch MCP dependencies in the web application and local plugin server, Vite in the bundled frontend example and redirect handling in the WhatsApp example. Replace the unmaintained `ts-node-dev` watcher in the WhatsApp and Telegram templates with pinned `tsx`, removing its vulnerable globbing chain. Audit every canonical npm lockfile. Extend regression coverage for the security boundaries and ensure nested skill trees are included in maintainer review inventories.
+- Verify packed manifests with the bounded runtime archive parser, avoiding the native Windows tar failure; exercise that same check in platform previews.
+- Preserve direct-installer release identity by verifying the actual packed manifest and published registry `gitHead`; reject staged candidate changes and skipped protected-source validation.
+
+### Contributors
+
+Thanks to @msohaildev, @wassim-azi, @assaylabdesk-sudo, @djmahe4, @harshmaur, @tarunbatta, @pierrebrunelle, @beatra-ai, @wu736139669 and @waynehamadi for the catalog contributions and updates.
+
+## [19.12.1] - 2026-10-20 - "Direct Installer Release Identity"
+
+> The catalog stays at **2,724 skills**. This patch fixes the direct installer failing against any release published from the pre-built candidate tarball.
+
+### Fixed
+
+- **Direct installer `--release` installs no longer fail with "invalid registry response".** Since 19.10.0 the release pipeline publishes the pre-built candidate tarball, and `npm publish <file>.tgz` does not record `gitHead` in the registry metadata, so the installer's release-identity lookup received an empty response. The candidate packer now records the release commit in the packed manifest the way `npm publish` from a Git checkout does, so `agentic-awesome-skills --release X.Y.Z` installs again from 19.12.1 on.
+- **A release without `gitHead` names the missing field** instead of blaming the registry, and points at the issue tracker. Releases published before this patch (19.10.1, 19.11.0, 19.12.0) stay as they are; use `--tag vX.Y.Z` only if you accept an unverifiable ref.
+
+### Review scope
+
+The packer was exercised end-to-end on a fixture: it records the release commit, keeps the artifact name `package.tgz`, restores `package.json` byte-for-byte, and fails closed on modified or untracked source. The absence of `gitHead` for a pre-built tarball was reproduced against a local registry stub, and the reverse (a directory publish records it) was reproduced as well. No live npm publication or host configuration was changed by this patch.
+
+
+## [19.12.0] - 2026-10-20 - "Nine Reviewed Additions And A Pointer Repin"
+
+> Installable skill library update for Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, and related AI coding assistants. Adds **9** catalog skills and ships **2,724** skills.
+
+### Start here
+
+- Install: `npx agentic-awesome-skills@19.12.0`
+- [Choose your tool](README.md#choose-your-tool)
+- [Best skills by tool](README.md#best-skills-by-tool)
+- [Bundles](docs/users/bundles.md)
+- [Workflows](docs/users/workflows.md)
+
+### Added
+
+- **apify-linkedin-jobs-scraper** - search and export LinkedIn job postings with salary, seniority, recruiter and company fields through the author's Apify Actor, with a cost estimate and an explicit yes before a large paid run. `risk: critical` because runs spend the user's Apify credit.
+- **apify-tiktok-scraper** - collect TikTok videos, profiles, hashtags, comments and followers with engagement statistics through the author's Apify Actor, keeping paid AI add-ons off unless the user asks. `risk: critical` for the same paid-run reason.
+- **apify-facebook-ads-library-scraper** - research public Meta Ad Library ads by advertiser or keyword, and state plainly that spend and impressions exist only for political and social-issue ads and reach only for EU/UK ads. `risk: critical` for the same paid-run reason.
+- **deed-page** - publish an HTML file or static folder to a permanent public `https://<slug>.deed.page/` URL with one curl request, confirming first that no secret or personal data goes public and keeping the returned token out of commits. `risk: critical` because publishing is public and the token can delete the site.
+- **design-token-contrast** - measure WCAG 2.2 contrast between a project's color tokens in the light theme and dark mode, and propose the nearest passing color that keeps the hue, with the checker shipped as reviewable source.
+- **taasky** - negotiate meeting times, prices and dates with another person or their agent through the hosted Taasky MCP server, where the human confirms every accept, reject or withdraw in Telegram. `risk: critical` because it acts toward another party.
+- **uiverify-triage-visual-changes** - triage a UI Verify visual-regression build over the hosted MCP server: read the judge and the reviewers' comments, compare before and after, and only then accept baselines. `risk: critical` because accepting rewrites the project's baselines.
+- **unpaid-intern** - keep a plain-markdown second brain for work and turn transcripts, docs and tickets into briefings, meeting prep, debriefs and status tables, with drafts only and grading of guesses. `risk: critical` because it stores work records.
+- **goal-instruction-writer** - preview, draft, refine or audit durable agent Goals with acceptance evidence, drift controls, proportional verification and bounded waiting.
+
+### Changed
+
+- **17 official Beatra pointers repinned** - `ai-headshot-studio`, `ai-image-generation-studio`, `ai-logo-maker`, `ai-multilingual-dubbing`, `ai-photo-restyler`, `ai-podcast-voiceover`, `beatra-ai-video-studio`, `beatra`, `ecommerce-listing-image-set`, `music-generation-studio`, `poster-design-studio`, `product-photo-studio`, `suno-lyrics-to-song`, `talking-avatar-video`, `viral-video-teardown-remake`, `voice-cloning-studio` and `voiceover-narration-studio` now pin a source commit and a Git tree ID and fetch through `git clone --filter=blob:none` with a `TREE-OK` check, replacing the CDN zip download and the self-updater it carried.
+- **datacircle** - rewritten from a paid-lookup REST/MCP guide into a description of the plan-pricing dataset the site publishes, so the skill downloads `datacircle.json`/`.csv` and queries it instead of describing per-call pricing.
+- **krexa** and **arcmira-find-quotes** - upstream pin refreshed to 1.3.3 and the MCP connection requirement declared in the skill setup metadata.
+- **llm-cost-optimization**, **llmops-platform-engineering** and **multi-tenant-llm-hosting** - name Bifrost beside LiteLLM in the gateway, cost and multi-tenant guidance.
+
+### Merge batch
+
+- Ten open PRs were triaged, all of them touching catalog skills. All ten merged: the nine additions above plus the Beatra repin, each refreshed onto current `main` after review.
+- `design-token-contrast` shipped its checker as `skills/design-token-contrast/scripts/contraste.mjs`, which the fork intake classifies as `new_unapproved_path`/`new_unknown_extension`. The maintainer repair moved it to `references/contraste-checker.md` as reviewable source, matching how `story-bible-continuity` ships its checker; behaviour is unchanged and the extracted block was run against a fixture.
+- Where the automated review did not produce a passing result, approval used the exact-head maintainer attestation path, bound to the full 40-character head SHA. `manual-review-required` is recorded as such and is not a Tessl pass.
+
+### Review scope
+
+Every addition was reviewed in full at its exact submitted bytes, including bundled references. The extracted `design-token-contrast` checker was run on a two-token fixture (reported 3.54:1 as failing, exit 1). All 17 Beatra source-commit/tree-ID pairs were verified live against their upstream repositories before merge. The paid Apify skills were reviewed statically; none was run against a live Apify account during review. The broader catalog audit remains unfinished.
+
+### Thanks
+
+Thanks to **@harshmaur** for the three Apify Actor skills, **@marina-aronchik** for `taasky`, **@wu736139669** for `goal-instruction-writer`, **@f-o-x11** for `deed-page`, **@igrlk** for `uiverify-triage-visual-changes`, **@kevinmmiddleton** for `unpaid-intern`, **@Clagoss** for `design-token-contrast`, **@beatra-ai** for the pointer repin, **@waynehamadi** for the `datacircle` update and **@Swpn0neel** for the gateway wording, and to the upstream authors whose licensed material is included.
+
+
+## [19.11.0] - 2026-10-19 - "Three Reviewed Additions And A Continuity Checker"
+
+> Installable skill library update for Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, and related AI coding assistants. Adds **3** catalog skills and ships **2,715** skills.
+
+### Start here
+
+- Install: `npx agentic-awesome-skills@19.11.0`
+- [Choose your tool](README.md#choose-your-tool)
+- [Best skills by tool](README.md#best-skills-by-tool)
+- [Bundles](docs/users/bundles.md)
+- [Workflows](docs/users/workflows.md)
+
+### Added
+
+- **ppl-personal-crm** - use the ppl personal CRM over MCP to prepare for conversations, recall facts about people, log interactions and manage follow-ups. Resolves the exact person first, reads only what the task needs, writes only on explicit request, and never describes a draft as sent. `risk: critical` because it can write to personal records.
+- **story-bible-continuity** - deterministically check a long manuscript against a story bible for name drift, age arithmetic, era anachronisms, unpaid foreshadowing and POV leaks, with `file:line` evidence and a manuscript-bug / stale-bible / retcon verdict per hit. Ships its stdlib-only Python checker as reviewable source in `references/sbc-checker.md`; no model, no network.
+- **keenable-search-mcp** - search the public web with enforced `site` and `published_after`/`published_before` parameters, and read pages with an extraction prompt, through Keenable's keyless MCP server. States that queries, URLs and prompts go to Keenable, warns that extraction output is model-written rather than a quote, and never switches provider silently.
+
+### Merge batch
+
+- Six open PRs were triaged, all of them touching catalog skills. Three merged: `ppl-personal-crm`, `story-bible-continuity` and `keenable-search-mcp`, each refreshed onto current `main` with its complete skill tree byte-identical to the reviewed head.
+- Where the automated review did not produce a passing result, approval used the exact-head maintainer attestation path, bound to the full 40-character head SHA. `manual-review-required` is recorded as such and is not a Tessl pass.
+- Three PRs remain open with one exact blocker each, and none of them was merged or bypassed: `goal-instruction-writer` carries `skills/<id>/agents/openai.yaml` and `walkthrough.md`, which the fork intake classifies as unapproved paths; `taasky` is an official skill whose source is published only as a docs-site well-known file, so the changed-skill evaluator rejects it for a missing `source_repo`; `krexa` 1.3.3 bumps the pinned `source:` field, which the provenance-identity gate blocks because the trusted ledger records `source_repo` renames only.
+
+### Review scope
+
+Every new skill was reviewed in full at its exact submitted bytes, including bundled references and the embedded checker source in `story-bible-continuity`. The embedded checker was extracted, compiled and run against a two-chapter fixture to confirm it reports the intended findings and exits non-zero. `ppl-personal-crm` and `keenable-search-mcp` were reviewed statically; neither was exercised against its live hosted service during review. The broader catalog audit remains unfinished.
+
+### Thanks
+
+Thanks to **@dbhurley** for `ppl-personal-crm`, **@jiawood2006** for `story-bible-continuity`, and **@keenableai** for `keenable-search-mcp`, and to the upstream authors whose licensed material is included.
+
 ## [19.10.1] - 2026-10-18 - "Verified Cross-Platform Distribution"
 
 The catalog remains at **2,712 skills**, with no new skills in this patch. This corrects the distribution checks that blocked npm and Pages publication of 19.10.0; its tag is preserved unchanged.

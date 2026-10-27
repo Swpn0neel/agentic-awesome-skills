@@ -12,10 +12,12 @@ const {
 } = require("../lib/workflow-contract");
 
 function parseArgs(argv) {
-  const [command, version] = argv;
+  const [command, version, ...rest] = argv;
+  if (rest.length && (rest.length !== 2 || rest[0] !== '--state-dir' || !rest[1])) throw Error('Use --state-dir /absolute/private/cycle');
   return {
     command,
     version: version || null,
+    stateDir: rest[1],
   };
 }
 
@@ -267,17 +269,22 @@ function runReleaseSuite(projectRoot) {
     runCommand("npm", ["run", script], projectRoot);
 }
 
-function runReleasePreflight(projectRoot) {
+function runReleasePreflight(projectRoot, dependencies = {}) {
   ensureOnMain(projectRoot);
   ensureCleanWorkingTree(projectRoot, "release:preflight requires a clean tracked working tree.");
   const version = readPackageVersion(projectRoot);
-  ensureChangelogSection(projectRoot, version);
-  runReleaseSuite(projectRoot);
-  ensureCleanWorkingTree(
-    projectRoot,
-    "release:preflight left tracked changes. Sync and commit them before releasing.",
-  );
-  console.log(`[release] Preflight passed for version ${version}.`);
+  // Development main intentionally carries the last distribution snapshot.
+  // Validate regeneration in an isolated clone; never tell the maintainer to
+  // commit generated drift to source main or run the same suite before prepare.
+  const prepare = dependencies.prepare || require("./pr_preflight.cjs").prepareTestPreview;
+  const head = runCommand("git", ["rev-parse", "HEAD"], projectRoot, { capture: true }).trim();
+  const preview = prepare(projectRoot, head, undefined, false);
+  try {
+    if (preview.preparation.exitCode || !preview.root) throw new Error(preview.preparation.output);
+    (dependencies.suite || runReleaseSuite)(preview.root);
+  } finally { preview.cleanup(); }
+  ensureCleanWorkingTree(projectRoot, "Preflight unexpectedly changed the source checkout.");
+  console.log(`[release] Isolated preflight passed for ${version}; generated preview discarded. No publication authorized.`);
 }
 
 function stageReleaseFiles(projectRoot, contract) {
@@ -318,7 +325,7 @@ function convergePreparedRelease(projectRoot, contract, options = {}) {
   ensureCleanWorkingTree(projectRoot, "Prepared release has generated or unmanaged drift; refusing to push.");
 }
 
-function prepareRelease(projectRoot, version) {
+function prepareRelease(projectRoot, version, stateDir) {
   if (!version) {
     throw new Error("Usage: npm run release:prepare -- X.Y.Z");
   }
@@ -328,9 +335,12 @@ function prepareRelease(projectRoot, version) {
   ensureCleanWorkingTree(projectRoot, "release:prepare requires a clean tracked working tree.");
   ensureTagMissing(projectRoot, `v${version}`);
   ensureChangelogSection(projectRoot, version);
+  const cycleGate = require('./release_cycle_gate.cjs');
+  const cycleProof = cycleGate.prepareProof(projectRoot, version, stateDir);
   const releaseBranch = `release/v${version}`;
   runCommand("git", ["switch", "-c", releaseBranch], projectRoot);
 
+  fs.writeFileSync(path.join(projectRoot, cycleGate.FILE), JSON.stringify(cycleProof, null, 2) + '\n');
   const currentVersion = readPackageVersion(projectRoot);
   if (currentVersion !== version) {
     runCommand("npm", ["version", version, "--no-git-tag-version"], projectRoot);
@@ -412,6 +422,7 @@ function publishRelease(projectRoot, version) {
     throw new Error(`package.json version ${packageVersion} does not match requested release ${version}.`);
   }
 
+  require('./release_cycle_gate.cjs').verifyFile(projectRoot, version);
   const tagName = `v${version}`;
   const candidate = mergedReleaseCandidate(projectRoot, version);
 
@@ -467,7 +478,7 @@ function main() {
   }
 
   if (args.command === "prepare") {
-    prepareRelease(projectRoot, args.version);
+    prepareRelease(projectRoot, args.version, args.stateDir);
     return;
   }
 
@@ -481,16 +492,9 @@ function main() {
   );
 }
 
-if (require.main === module) {
-  try {
-    main();
-  } catch (error) {
-    console.error(`[release] ${error.message}`);
-    process.exit(1);
-  }
-}
 
 module.exports = {
+  runReleasePreflight,
   convergePreparedRelease,
   localTagTarget,
   remoteTagTarget,
@@ -500,3 +504,12 @@ module.exports = {
   selectMergedReleaseCandidate,
   validateReleaseSuccessors,
 };
+
+if (require.main === module) {
+  try {
+    main();
+  } catch (error) {
+    console.error(`[release] ${error.message}`);
+    process.exit(1);
+  }
+}
